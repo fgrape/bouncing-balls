@@ -15,11 +15,13 @@ import graphics.Display;
 
 public class BouncingBalls {
 
+	private final int MAX_NUMBER_OF_BALLS = 20;
+
+	private Random random = new Random();
+
 	private int numberOfBalls = 10;
 	private Color backgroundColor = Color.black;
 	private float speed = 5f;
-	private float gravity = 0.25f;
-	private float loss = 0.25f;
 	private int minRadius = 10;
 	private int maxRadius = 50;
 	private Color color = Color.red;
@@ -40,23 +42,26 @@ public class BouncingBalls {
 
 	public void go() {
 		display = new Display(800, 600);
-		addBalls();
+		createBalls();
 		mainLoop();
 		display.destroy();
 	}
 
 	public void setNumberOfBalls(int numberOfBalls) {
-		if (numberOfBalls < 0 || numberOfBalls > 20) {
-			throw new IllegalArgumentException("Value must be in [0, 20]: " + numberOfBalls);
+		if (numberOfBalls < 1 || numberOfBalls > MAX_NUMBER_OF_BALLS) {
+			throw new IllegalArgumentException("Value must be in [1, " + MAX_NUMBER_OF_BALLS + "]: " + numberOfBalls);
 		}
 		this.numberOfBalls = numberOfBalls;
 	}
 
 	public void setSpeed(float speed) {
+		if (speed < 0 || speed > 15) {
+			throw new IllegalArgumentException("Value must be in [0, 10]: " + speed);
+		}
 		this.speed = speed;
 	}
 
-	public void setRadii(int maxRadius, int minRadius) {
+	public void setRadii(int minRadius, int maxRadius) {
 		if (minRadius < 10 || minRadius > 20) {
 			throw new IllegalArgumentException("minRadius must be in [10, 20]: " + minRadius);
 		}
@@ -65,24 +70,31 @@ public class BouncingBalls {
 		}
 		this.maxRadius = maxRadius;
 		this.minRadius = minRadius;
+		updateRadii();
+	}
+
+	private void updateRadii() {
+		for (Ball ball : balls) {
+			ball.radius = random.nextInt(maxRadius - minRadius) + minRadius;
+		}
 	}
 
 	public void setColor(String color) {
 		switch (color.toLowerCase()) {
-		case "red":
-			this.color = Color.red;
-			break;
-		case "blue":
-			this.color = Color.blue;
-			break;
-		case "yellow":
-			this.color = Color.yellow;
-			break;
-		case "cage":
-			this.color = null;
-			break;
-		default:
-			throw new IllegalArgumentException("Invalid color string: " + color);
+			case "red":
+				this.color = Color.red;
+				break;
+			case "blue":
+				this.color = Color.blue;
+				break;
+			case "yellow":
+				this.color = Color.yellow;
+				break;
+			case "cage":
+				this.color = null;
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid color string: " + color);
 		}
 
 	}
@@ -96,18 +108,16 @@ public class BouncingBalls {
 		}
 	}
 
-	private void addBalls() {
-		Random random = new Random();
-
-		for (int i = 0; i < numberOfBalls; i++) {
+	private void createBalls() {
+		for (int i = 0; i < MAX_NUMBER_OF_BALLS; i++) {
 
 			int radius = random.nextInt(maxRadius - minRadius) + minRadius;
 
 			int x = random.nextInt(display.width - radius * 2) + radius;
 			int y = random.nextInt(display.height - radius * 2) + radius;
 
-			float speedX = random.nextFloat() * speed;
-			float speedY = random.nextFloat() * speed;
+			float speedX = random.nextFloat();
+			float speedY = random.nextFloat();
 
 			Ball ball = new Ball(x, y, speedX, speedY, radius);
 			balls.add(ball);
@@ -115,11 +125,11 @@ public class BouncingBalls {
 	}
 
 	private void updatePhysics() {
-		for (Ball ball : balls) {
+		for (int i = 0; i < numberOfBalls; i++) {
+			Ball ball = balls.get(i);
 
-			ball.x += ball.speedX;
-			ball.y += ball.speedY;
-			ball.speedY += gravity;
+			ball.x += ball.speedX * speed;
+			ball.y += ball.speedY * speed;
 
 			if (ball.x - ball.radius < 0) {
 				ball.speedX = Math.abs(ball.speedX);
@@ -127,9 +137,9 @@ public class BouncingBalls {
 				ball.speedX = -Math.abs(ball.speedX);
 			}
 			if (ball.y - ball.radius < 0) {
-				ball.speedY = Math.abs(ball.speedY + loss);
+				ball.speedY = Math.abs(ball.speedY);
 			} else if (ball.y + ball.radius > display.height) {
-				ball.speedY = -Math.abs(ball.speedY - loss);
+				ball.speedY = -Math.abs(ball.speedY);
 			}
 		}
 	}
@@ -138,7 +148,8 @@ public class BouncingBalls {
 		g.setBackground(backgroundColor);
 		g.clearRect(0, 0, display.width, display.height);
 
-		for (Ball ball : balls) {
+		for (int i = 0; i < numberOfBalls; i++) {
+			Ball ball = balls.get(i);
 			g.setColor(color);
 
 			int x = (int) (ball.x - ball.radius);
@@ -150,10 +161,6 @@ public class BouncingBalls {
 				g.drawImage(cage, x, y, x + size, y + size, 0, 0, cage.getWidth(), cage.getHeight(), null);
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		new BouncingBalls().go();
 	}
 
 }
