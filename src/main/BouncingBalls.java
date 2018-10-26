@@ -22,7 +22,7 @@ public class BouncingBalls {
     private int numberOfBalls = 10;
     private Color backgroundColor = Color.black;
     private float speed = 5f;
-    private int minRadius = 10;
+    private int minRadius = 20;
     private int maxRadius = 50;
     private Color color = Color.red;
     private BufferedImage cage;
@@ -62,11 +62,11 @@ public class BouncingBalls {
     }
 
     public void setRadii(int minRadius, int maxRadius) {
-        if (minRadius < 10 || minRadius > 20) {
-            throw new IllegalArgumentException("minRadius must be in [10, 20]: " + minRadius);
+        if (minRadius < 20 || minRadius > 30) {
+            throw new IllegalArgumentException("minRadius must be in [20, 30]: " + minRadius);
         }
-        if (maxRadius < 30 || maxRadius > 50) {
-            throw new IllegalArgumentException("maxRadius must be in [30, 50]: " + minRadius);
+        if (maxRadius < 40 || maxRadius > 70) {
+            throw new IllegalArgumentException("maxRadius must be in [30, 70]: " + minRadius);
         }
         this.maxRadius = maxRadius;
         this.minRadius = minRadius;

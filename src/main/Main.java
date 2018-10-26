@@ -52,16 +52,16 @@ public class Main {
                     bb.setNumberOfBalls(15);
                     break;
                 case 12:
-                    bb.setRadii(10, 30);
-                    break;
-                case 13:
-                    bb.setRadii(15, 35);
-                    break;
-                case 14:
                     bb.setRadii(20, 40);
                     break;
+                case 13:
+                    bb.setRadii(25, 50);
+                    break;
+                case 14:
+                    bb.setRadii(30, 60);
+                    break;
                 case 15:
-                    bb.setRadii(20, 50);
+                    bb.setRadii(30, 70);
                     break;
             }
             sleepSafe(500);
